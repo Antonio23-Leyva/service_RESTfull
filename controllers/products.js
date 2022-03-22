@@ -1,80 +1,83 @@
 const modelProduct = require('../models/product');
-const app = require('express');
-const router = app.Router();
+const express = require('express');
 
 /*
-
  Add one product 
- parameters: name, price, size
-*
  */
 
-router.post('/orc/v1/products', async(req, res) => {
+exports.addProduct = async(req, res) => {
     try {
-        const createProduct = new modelProduct(req.body);       
-        const result = await createProduct.save();
-        res.status(201).json({error:false, data:result});
+        const result = await modelProduct.create(req.body);
+        res.status(201).json({
+            status:'transaction sucessfull...', 
+            data: {
+                result
+            }
+        });
     }   catch (error) {
-        res.status(500).json({error: true, data: []});
+        res.status(500).json({
+            status: 'transaction failed', 
+            message: error
+        });
     }
-});
+};
 
-/* 
- */
-
-router.get('/', async(req,res) => {
-    try {
-        const dataProduct = await modelProduct.find();
-        return res.json({error:false, data:dataProduct});
-    } catch (error) {
-        res.statusCode(500).json({error: true, data: []});
-    }
-});
-
-
-
-// exports.addProduct = async (newProduct) => {
-//     try {
-//         const createProduct = new modelProduct(newProduct);       
-//         const result = await createProduct.save();
-//         console.log(result);
-//     } catch (error) {
-//         console.log(error);
-//     }
-// };
 
 /* Update one product */
-exports.updateProduct = async (findProduct, data) => {
+exports.updateProduct = async(req, res) => {
     try {
-        const searchProduct = await modelProduct.updateOne({name: findProduct}, {
-            $set: {
-                price : data
-            } 
+        const results = await modelProduct.updateOne({ _id: req.params.id },
+            {
+                $set: req.body
+            }
+        );
+        res.status(201).json({
+            status:'transaction sucessfull...',
+            data: {
+                results
+            }
         });
-        console.log(`${searchProduct.matchedCount} document matched`);
-        console.log(`${searchProduct.modifiedCount} modified document`);
+        
     } catch (error) {
-        console.log(error);
+        res.status(500).json({
+            status:'transaction failed', 
+            message: error
+        });
     }
 };
 
 /* Delete one product */
-exports.deleteProduct = async (search) => {
+exports.deleteProduct = async (req, res) => {
     try {
-        const searchProduct = await modelProduct.deleteOne({name: search});
-        console.log(searchProduct);
+        const results = await modelProduct.deleteOne(req.body.id);
+        res.status(201).json({
+            status:'transaction sucessfull...', 
+            data: {
+                results
+            }
+        });
     } catch (error) {
-        console.log(error);
+        res.status(500).json({
+            status:'transaction failed', 
+            message: error
+        });
     }
 };
 
 /* Get all products */
-exports.getProducts = async () => {
+exports.getProducts = async (req,res) => {
     try {
-        const users = await modelProduct.find();
-        console.log(`[====== Todos los productos ======]\n
-            ${users}`);
+        const results = await modelProduct.find();
+        res.status(201).json({
+            status:'transaction sucessfull...', 
+            data: {
+                results
+            }
+        });
     } catch (err) {
-        console.log(err);
+        res.status(500).json({
+            status:'transaction failed',
+            message: err
+        });
     }
 };

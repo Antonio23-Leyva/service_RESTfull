@@ -1,5 +1,4 @@
 const mongooseClient = require('mongoose');
-const dbconect = require('../utils/dbConection');
 
 
 const uri = 'mongodb+srv://dev:GPxt9k7Q5oBlg2Iw@cluster0.ouzc6.mongodb.net/products?retryWrites=true&w=majority';
